@@ -6,7 +6,6 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const _ = require("lodash");
 const mongoose = require("mongoose");
-const serverless = require("serverless-http");
 
 const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam...";
 const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pellentesque...";
