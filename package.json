@@ -7,9 +7,8 @@
     "node": "22.x"
   },
   "scripts": {
-    "start" : "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "echo 'No build step required for this app"
+      "start": "node app.js",
+      "build": "echo 'No build step required for this app'"
   },
   "author": "",
   "license": "ISC",
