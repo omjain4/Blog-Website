@@ -1,4 +1,5 @@
 // jshint esversion: 6
+const serverless = require('serverless-http');
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -120,3 +121,4 @@ const port =  process.env.PORT || 9001;
 app.listen(port,(req,res)=>{
   console.log("Server is running on port ${port}");
 });
+module.exports.handler = serverless(app);
