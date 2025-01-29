@@ -18,17 +18,23 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb+srv://omjain4:omjain4@cluster0.4zclh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", { useUnifiedTopology: true, useNewUrlParser: true });
+// In app.js
+mongoose.connect("mongodb+srv://omjain4:omjain4@cluster0.4zclh.mongodb.net/blogDB?retryWrites=true&w=majority")
+.then(() => console.log("Connected to MongoDB"))
+.catch(err => console.error("Connection error:", err));
 
-// Post Schema
 const postSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: [true, "No title specified."]
+    required: [true, "Title is required"],
+    minlength: [3, "Title must be at least 3 characters"],
+    maxlength: [100, "Title cannot exceed 100 characters"]
   },
   content: {
     type: String,
-    required: [true, "No content specified."]
+    required: [true, "Content is required"],
+    minlength: [10, "Content must be at least 10 characters"],
+    maxlength: [5000, "Content cannot exceed 5000 characters"]
   }
 });
 
@@ -56,23 +62,44 @@ app.get("/contact", function(req, res) {
 });
 
 app.get("/compose", function(req, res) {
-  res.render("compose");
+  res.render("compose", {
+    error: false,
+    titleError: '',
+    contentError: '',
+    postTitle: '',
+    postBody: ''
+  });
 });
 
 app.post("/compose", async function(req, res) {
-   try {
-     const post = new Post({
-       title: req.body.postTitle,
-       content: req.body.postBody
-     });
- 
-     await post.save(); // Using async/await instead of callback
-     res.redirect("/");
-   } catch (err) {
-     console.error(err);
-     res.status(500).send("Error saving post.");
-   }
-});
+  try {
+    const post = new Post({
+      title: req.body.postTitle.trim(),
+      content: req.body.postBody.trim()
+    });
+
+    await post.validate(); // Manually trigger validation
+    
+    await post.save();
+    res.redirect("/");
+  } catch (err) {
+    const errors = {};
+    
+    // Handle validation errors
+    if (err.errors) {
+      for (const field in err.errors) {
+        errors[`${field}Error`] = err.errors[field].message;
+      }
+    }
+
+    res.render("compose", {
+      error: err.message,
+      ...errors,
+      postTitle: req.body.postTitle,
+      postBody: req.body.postBody
+    });
+  }
+})
 
 // POSTS Route - GET
 app.get("/posts/:postID", async function(req, res) {
@@ -89,6 +116,6 @@ app.get("/posts/:postID", async function(req, res) {
      res.status(500).send("Error retrieving the post.");
    }
 });
-
-// Serverless function setup for Vercel
-module.exports.handler = serverless(app);
+app.listen(3000, function() {
+  console.log("Server started on port 3000");
+});

@@ -1,18 +1,47 @@
 <%- include("partials/header") -%> 
 
 <div class="container mt-4">
-    <h1>Compose New Post</h1>
+    <h1 class="mb-4">Compose New Post</h1>
+    
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= error %>
+        </div>
+    <% } %>
+
     <form action="/compose" method="POST">
         <div class="form-group">
             <label for="postTitle">Title</label>
-            <input type="text" id="postTitle" class="form-control" name="postTitle" required>
+            <input type="text" id="postTitle" 
+                   class="form-control <%= typeof titleError !== 'undefined' ? 'is-invalid' : '' %>" 
+                   name="postTitle" 
+                   value="<%= typeof postTitle !== 'undefined' ? postTitle : '' %>"
+                   required>
+            <% if (typeof titleError !== 'undefined') { %>
+                <div class="invalid-feedback">
+                    <%= titleError %>
+                </div>
+            <% } %>
         </div>
-        <div class="form-group mt-3">
-            <label for="postBody">Post</label>
-            <textarea id="postBody" name="postBody" class="form-control" cols="30" rows="5" required></textarea>
+
+        <div class="form-group mt-4">
+            <label for="postBody">Content</label>
+            <textarea id="postBody" name="postBody" 
+                      class="form-control <%= typeof contentError !== 'undefined' ? 'is-invalid' : '' %>" 
+                      cols="30" rows="8"
+                      required><%= typeof postBody !== 'undefined' ? postBody : '' %></textarea>
+            <% if (typeof contentError !== 'undefined') { %>
+                <div class="invalid-feedback">
+                    <%= contentError %>
+                </div>
+            <% } %>
         </div>
-        <button type="submit" class="btn btn-primary mt-3">Publish</button>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary px-4">Publish</button>
+            <a href="/" class="btn btn-outline-secondary ms-2">Cancel</a>
+        </div>
     </form>
 </div>
 
-<%- include("partials/footer") -%> 
+<%- include("partials/footer") -%>
