@@ -116,6 +116,7 @@ app.get("/posts/:postID", async function(req, res) {
      res.status(500).send("Error retrieving the post.");
    }
 });
-app.listen(3000, function() {
-  console.log("Server started on port 3000");
+const port =  process.env.PORT || 9001;
+app.listen(port,(req,res)=>{
+  console.log("Server is running on port ${port}");
 });
